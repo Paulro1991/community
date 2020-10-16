@@ -7,6 +7,8 @@ import okhttp3.*;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 
 @Component
 public class GithubProvider {
@@ -29,8 +31,10 @@ public class GithubProvider {
     }
 
     public GithubUser getUser(String accessToken) {
-        OkHttpClient client = new OkHttpClient();
+        // 代理连接github
+        Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("localhost", 7891));
 
+        OkHttpClient client = new OkHttpClient.Builder().proxy(proxy).build();
         Request request = new Request.Builder()
                 .header("Authorization","token " + accessToken)
                 .url("https://api.github.com/user")
