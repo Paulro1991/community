@@ -12,6 +12,8 @@
 ## 工具
 [Git](https:git-scm.com/download)  
 [Visual Paradigm](https://www.visual-paradigm.com/)
+[Flyway](https://flywaydb.org/documentation/getstarted/firststeps/maven)  
+[Lombol](https://projectlombok.org/)
 
 ## 脚本
 ```sql
@@ -23,7 +25,6 @@ create table USER
 	TOKEN CHAR(36),
 	GMT_CREATE BIGINT,
 	GMT_MODIFIED BIGINT,
-	constraint USER_PK
 		primary key (ID)
 );
 ```
