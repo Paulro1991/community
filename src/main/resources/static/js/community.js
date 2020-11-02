@@ -22,7 +22,6 @@ function comment2target(targetId, type, content) {
         }),
         success: function (response) {
             if (response.code == 200) {
-                $("#comment_section").hide();
                 window.location.reload();
             } else {
                 if (response.code == 2003) {
@@ -143,4 +142,20 @@ function collapseComments(e) {
             });
         }
     }
+}
+
+function selectTag(e) {
+    var value = e.getAttribute("data")
+    var previous = $("#tag").val();
+    if (previous.indexOf(value) == -1) {
+        if (previous) {
+            $("#tag").val(previous + ',' + value);
+        } else {
+            $("#tag").val(value);
+        }
+    }
+}
+
+function showSelectTag() {
+    $("#select-tag").show();
 }

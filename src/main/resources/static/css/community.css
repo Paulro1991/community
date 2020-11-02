@@ -47,6 +47,18 @@ body {
     padding-left: 0;
 }
 
+.publish-tag-tab {
+    display: none;
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+.publish-tag-tab .label-info {
+    margin: 5px 5px;
+    white-space: normal;
+    display: inline-block;
+}
+
 .community-menu {
     color: #999;
     font-size: 13px;
@@ -109,4 +121,5 @@ body {
 .media-body .menu .pull-right {
     font-size: smaller;
 }
+
 

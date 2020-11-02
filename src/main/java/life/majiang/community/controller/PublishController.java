@@ -1,9 +1,11 @@
 package life.majiang.community.controller;
 
+import life.majiang.community.cache.TagCache;
 import life.majiang.community.dto.QuestionDTO;
 import life.majiang.community.model.Question;
 import life.majiang.community.model.User;
 import life.majiang.community.service.QuestionService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,16 +23,17 @@ public class PublishController {
     private QuestionService questionService;
 
     @GetMapping("/publish")
-    public String publish() {
+    public String publish(Model model) {
+        model.addAttribute("tags", TagCache.get());
         return "publish";
     }
 
     @PostMapping("/publish")
     public String doPublish(
-            @RequestParam(value = "title", required = false)String title,
-            @RequestParam(value = "description",required = false)String description,
-            @RequestParam(value = "tag",required = false)String tag,
-            @RequestParam(value = "id",required = false)Long id, //获取页面隐藏id，作为判断是编辑旧问题还是发布新问题的依据
+            @RequestParam(value = "title", required = false) String title,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "tag", required = false) String tag,
+            @RequestParam(value = "id", required = false) Long id, //获取页面隐藏id，作为判断是编辑旧问题还是发布新问题的依据
             HttpServletRequest request,
             Model model
     ) {
@@ -48,6 +51,12 @@ public class PublishController {
         }
         if (tag == null || tag == "") {
             model.addAttribute("error", "标签不能为空");
+            return "publish";
+        }
+
+        String invalid = TagCache.filterInvalid(tag);
+        if (StringUtils.isNoneBlank(invalid)) {
+            model.addAttribute("error", "输入非法标签" + invalid);
             return "publish";
         }
 
@@ -69,13 +78,14 @@ public class PublishController {
     }
 
     @GetMapping("/publish/{id}")
-    public String edie(@PathVariable(name = "id")Long id,
+    public String edie(@PathVariable(name = "id") Long id,
                        Model model) {
         QuestionDTO question = questionService.getById(id);
         model.addAttribute("title", question.getTitle());
         model.addAttribute("description", question.getDescription());
         model.addAttribute("tag", question.getTag());
         model.addAttribute("id", question.getId());
+        model.addAttribute("tags", TagCache.get());
         return "publish";
     }
 }

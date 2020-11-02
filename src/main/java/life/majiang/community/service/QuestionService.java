@@ -2,6 +2,7 @@ package life.majiang.community.service;
 
 import life.majiang.community.dto.PaginationDTO;
 import life.majiang.community.dto.QuestionDTO;
+import life.majiang.community.dto.QuestionQueryDTO;
 import life.majiang.community.exception.CustomizeErrorCode;
 import life.majiang.community.exception.CustomizeException;
 import life.majiang.community.mapper.QuestionExtMapper;
@@ -33,10 +34,19 @@ public class QuestionService {
     @Autowired
     private QuestionExtMapper questionExtMapper;
 
-    public PaginationDTO list(Integer page, Integer size) {
+    public PaginationDTO<QuestionDTO> list(String search, Integer page, Integer size) {
+        // 搜索功能
+        if (StringUtils.isNotBlank(search)) {
+            String[] tags = StringUtils.split(search, " ");
+            search = Arrays.stream(tags).collect(Collectors.joining("|"));
+        }
+
+        // 算出分页数据
         Integer totalPage;
-        QuestionExample questionExample = new QuestionExample();
-        Integer totalCount = (int) questionMapper.countByExample(questionExample);
+
+        QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
+        questionQueryDTO.setSearch(search);
+        Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
 
         if (totalCount % size == 0) {
             totalPage = totalCount / size;
@@ -51,14 +61,15 @@ public class QuestionService {
         if (page > totalPage) {
             page = totalPage;
         }
-        PaginationDTO paginationDTO = new PaginationDTO();
+        PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO<>();
         paginationDTO.setPagination(totalPage, page);
 
         Integer offset = size * (page - 1);
 
         // 倒序
-        questionExample.setOrderByClause("`id` DESC");
-        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(offset, size));
+        questionQueryDTO.setPage(offset);
+        questionQueryDTO.setSize(size);
+        List<Question> questionList = questionExtMapper.selectBySearch(questionQueryDTO);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
 
         for (Question question : questionList) {
@@ -68,11 +79,11 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        paginationDTO.setQuestions(questionDTOList);
+        paginationDTO.setData(questionDTOList);
         return paginationDTO;
     }
 
-    public PaginationDTO list(Long userId, Integer page, Integer size) {
+    public PaginationDTO<QuestionDTO> list(Long userId, Integer page, Integer size) {
         Integer totalPage;
 
         QuestionExample questionExample = new QuestionExample();
@@ -92,7 +103,7 @@ public class QuestionService {
         if (page > totalPage) {
             page = totalPage;
         }
-        PaginationDTO paginationDTO = new PaginationDTO();
+        PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO<>();
         paginationDTO.setPagination(totalPage, page);
 
         Integer offset = size * (page - 1);
@@ -109,7 +120,7 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        paginationDTO.setQuestions(questionDTOList);
+        paginationDTO.setData(questionDTOList);
 
         return paginationDTO;
     }
@@ -166,7 +177,6 @@ public class QuestionService {
         }
         String[] tags = StringUtils.split(queryDTO.getTag(), ",");
         String regexpTag = Arrays.stream(tags).collect(Collectors.joining("|"));
-        System.out.println(regexpTag);
         Question question = new Question();
         // 查询relatedQuestions需要2个参数：问题id以及tag
         question.setId(queryDTO.getId());

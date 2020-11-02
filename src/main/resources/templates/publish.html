@@ -6,8 +6,12 @@
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="/css/community.css">
+    <link rel="stylesheet" href="/css/editormd.min.css">
     <script src="/js/jquery-3.5.1.min.js"></script>
     <script src="/js/bootstrap.min.js" type="application/javascript"></script>
+    <script src="/js/community.js" type="application/javascript"></script>
+    <script src="/js/editormd.min.js" type="application/javascript"></script>
+
 </head>
 <body>
 
@@ -25,16 +29,51 @@
                     <input type="text" class="form-control" id="title" name="title" placeholder="问题标题......"
                            th:value="${title}">
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="question-editor">
                     <label for="title">问题补充（必填，请参照右侧提示）：</label>
                     <textarea class="form-control" name="description" id="description" cols="30" rows="10"
-                              th:text="${description}"></textarea>
+                              th:text="${description}" style="display: none"></textarea>
                 </div>
-                <div class="form-group">
+                <script type="text/javascript">
+                    $(function () {
+                        var editor = editormd("question-editor", {
+                            width: "100%",
+                            height: 500,
+                            path: "/js/lib/",
+                            delay: 0,
+                            watch: false,
+                            placeholder: "请输入问题描述",
+                            imageUpload: true,
+                            imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                            imageUploadURL: "/file/upload",
+                        });
+                    });
+                </script>
+                <span class="form-group">
                     <label for="title">添加标签：</label>
                     <input type="text" class="form-control" id="tag" name="tag" placeholder="输入标签，以,号分隔"
-                           th:value="${tag}">
+                           th:value="${tag}" autocomplete="off" onclick="showSelectTag()">
+                </span>
+                <div id="select-tag" class="publish-tag-tab">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" th:each="td, iterStat : ${tags}" th:class="${iterStat.first}? 'active'">
+                            <a th:href="'#'+${td.categoryName}" role="tab" data-toggle="tab"
+                               th:text="${td.categoryName}"></a>
+                        </li>
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane" th:each="td,iterStat : ${tags}" th:id="${td.categoryName}"
+                             th:class="${iterStat.first}? 'tab-pane active' : 'tab-pane'">
+                            <span class="label label-info question-tag" th:each="t : ${td.tags}">
+                                <span class="glyphicon glyphicon-tags" th:text="' '+${t}" th:data="${t}"
+                                      onclick="selectTag(this)"></span>
+                            </span>
+                        </div>
+                    </div>
                 </div>
+
 
                 <div class="container-fluid main">
                     <div class="row">
@@ -57,5 +96,8 @@
         </div>
     </div>
 </div>
+
+<div th:insert="footer :: foot"></div>
+
 </body>
 </html>

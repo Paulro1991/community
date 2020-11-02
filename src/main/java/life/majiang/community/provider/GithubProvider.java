@@ -6,7 +6,6 @@ import life.majiang.community.dto.GithubUser;
 import okhttp3.*;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 
