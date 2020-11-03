@@ -71,46 +71,46 @@ function collapseComments(e) {
                         "class": "col-lg-12 col-md-12 col-sm-12 col-xs-12 comments",
                     });
 
-                        //2
+                    //2
                     var mediaElement = $("<div/>", {
                         "class": "media"
                     });
 
-                            //3-1
+                    //3-1
                     var mediaLeftElement = $("<div/>", {
-                        "class":"media-left"
+                        "class": "media-left"
                     });
-                                //3-1-1
-                    var  avatarElement = $("<img/>", {
-                        "class":"media-object img-rounded",
+                    //3-1-1
+                    var avatarElement = $("<img/>", {
+                        "class": "media-object img-rounded",
                         "src": comment.user.avatarUrl
                     });
 
-                            //3-2
+                    //3-2
                     var mediaBody = $("<div/>", {
-                        "class":"media-body"
+                        "class": "media-body"
                     });
-                                //3-2-1
+                    //3-2-1
                     var mediaHeading = $("<h6/>", {
-                        "class":"media-heading"
+                        "class": "media-heading"
                     });
-                                    //3-2-1-1
+                    //3-2-1-1
                     var username = $("<span/>", {
-                        html:comment.user.name
+                        html: comment.user.name
                     });
-                                //3-2-2
+                    //3-2-2
                     var content = $("<div/>", {
-                        html:comment.content
+                        html: comment.content
                     });
-                                //3-2-3
+                    //3-2-3
                     var menu = $("<div/>", {
-                        "class":"menu"
+                        "class": "menu"
                     });
-                                    //3-2-3-1
+                    //3-2-3-1
                     var gmtTime = new Date(comment.gmtCreate).toISOString();
                     var time = $("<span/>", {
                         "class": "pull-right",
-                        html: gmtTime.substring(0,10) + " " + gmtTime.substring(11,19)
+                        html: gmtTime.substring(0, 10) + " " + gmtTime.substring(11, 19)
                     });
 
                     //3-1
